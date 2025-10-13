@@ -1,0 +1,95 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 950,
+  "height": 520,
+  "title": "Australia's International Air Transport Flows by Country (1985–2024)",
+  "config": { "view": { "stroke": null }, "background": "#f9f9f9" },
+
+  "params": [
+    {
+      "name": "flow_type",
+      "value": "Passengers",
+      "bind": {
+        "input": "select",
+        "options": ["Passengers", "Freight", "Mail"],
+        "labels": ["Passengers", "Freight (tonnes)", "Mail (tonnes)"],
+        "name": "Traffic Type: "
+      }
+    },
+    {
+      "name": "flow_direction",
+      "value": "Total",
+      "bind": {
+        "input": "select",
+        "options": ["In", "Out", "Total"],
+        "labels": ["Inbound", "Outbound", "Total"],
+        "name": "Flow Direction: "
+      }
+    },
+    {
+      "name": "year_select",
+      "value": 2024,
+      "bind": {
+        "input": "range",
+        "min": 1985,
+        "max": 2024,
+        "step": 1,
+        "name": "Year: "
+      }
+    }
+  ],
+
+  "projection": {"type": "equalEarth"},
+
+  "layer": [
+    {
+      "data": {
+        "url": "ne_110m_admin_0_countries.topojson",
+        "format": { "type": "topojson", "property": "countries" }
+      },
+      "transform": [
+        {
+          "lookup": "properties.NAME",
+          "from": {
+            "data": { "url": "data/city_pairs.csv" },
+            "key": "Country",
+            "fields": ["Year", "Passengers_In", "Passengers_Out", "Passengers_Total", "Freight_In_(tonnes)", "Freight_Out_(tonnes)", "Freight_Total_(tonnes)", "Mail_In_(tonnes)", "Mail_Out_(tonnes)", "Mail_Total_(tonnes)"]
+          }
+        },
+        { "filter": "datum.Year == year_select" },
+        {
+          "calculate": "flow_type == 'Passengers' ? datum[flow_type + '_' + flow_direction] : datum[flow_type + '_' + flow_direction + '_(tonnes)']",
+          "as": "flow_value"
+        }
+      ],
+      "mark": { "type": "geoshape", "stroke": "white", "strokeWidth": 0.5 },
+      "encoding": {
+        "color": {
+          "field": "flow_value",
+          "type": "quantitative",
+          "scale": { 
+            "type": "log",
+            "scheme": "blues",
+            "domain": [1, 10000000]
+          },
+          "legend": { "title": "Flow Volume", "format": ".2s" }
+        },
+        "tooltip": [
+          { "field": "properties.NAME", "title": "Country" },
+          { "field": "flow_value", "type": "quantitative", "title": "Flow Volume"},
+          { "field": "Year", "title": "Year" }
+        ]
+      }
+    },
+    {
+      "data": { "values": [{ "city": "Australia", "longitude": 134, "latitude": -25 }] },
+      "mark": { "type": "circle", "color": "#d62728", "size": 200, "opacity": 0.8 },
+      "encoding": {
+        "longitude": { "field": "longitude", "type": "quantitative" },
+        "latitude": { "field": "latitude", "type": "quantitative" },
+        "tooltip": [{ "field": "city", "title": "Origin" }]
+      }
+    }
+  ]
+}
+  

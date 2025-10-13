@@ -11,25 +11,17 @@
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
     
     <!-- Link to custom CSS -->
-    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="container">
-        <div id="flow_map"></div>
+        <div id="choropleth_map"></div>
     </div>
 
     <script type="text/javascript">
         // Embed the flow map visualization
-        vegaEmbed('#flow_map', 'flow_map.vg.json', {
-            "actions": {
-                "export": true,
-                "source": false,
-                "editor": false
-            }
-        }).then(function(result) {
-            // Access the Vega view instance if needed
-            console.log('Flow map loaded successfully');
-        }).catch(console.error);
+        vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json', { actions: false });
     </script>
 </body>
 </html>
