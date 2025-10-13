@@ -1,0 +1,74 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": {
+      "expr": "'Top 10 Foreign Countries by Total Volume — ' + year_select"
+    },
+    "width": 700,
+    "height": 420,
+    "data": { "url": "data/city_pairs.csv" },
+  
+    "params": [
+      {
+        "name": "year_select",
+        "value": 2024,
+        "bind": { "input": "range", "min": 1985, "max": 2024, "step": 1, "name": "Year: " }
+      },
+      {
+        "name": "continentSel",
+        "select": { "type": "point", "fields": ["Continent"] },
+        "bind": "legend"
+      }
+    ],
+  
+    "transform": [
+      { "filter": "isValid(datum.Year) && toNumber(datum.Year) == year_select" },
+      { "calculate": "toNumber(datum['Freight_Total'])", "as": "FreightTotal" },
+  
+      { "aggregate": [{ "op": "sum", "field": "FreightTotal", "as": "TotalFreight" }], "groupby": ["Country"] },
+  
+      {
+        "lookup": "Country",
+        "from": {
+          "data": { "url": "data/mapping.csv" },
+          "key": "country",
+          "fields": ["continent"]
+        },
+        "as": ["Continent"]
+      },
+      { "calculate": "isValid(datum.Continent) ? datum.Continent : 'Unmapped'", "as": "Continent" },
+  
+      
+      { "filter": { "param": "continentSel" } },
+  
+      { "window": [{ "op": "rank", "as": "rank" }], "sort": [{ "field": "TotalFreight", "order": "descending" }] },
+      { "filter": "datum.rank <= 10" }
+    ],
+  
+    "mark": { "type": "bar" },
+  
+    "encoding": {
+      "x": {
+        "field": "TotalFreight",
+        "type": "quantitative",
+        "title": "Total Freight (tonnes)"
+      },
+      "y": {
+        "field": "Country",
+        "type": "nominal",
+        "sort": "-x",
+        "title": "Country"
+      },
+      "color": {
+        "field": "Continent",
+        "type": "nominal",
+        "title": "Continent",
+        "legend": { "title": "Filter by Continent (click)" }
+      },
+      "tooltip": [
+        { "field": "Country", "type": "nominal" },
+        { "field": "TotalFreight", "type": "quantitative", "title": "Total Freight (tonnes)", "format": ",.0f" },
+        { "field": "Continent", "type": "nominal" }
+      ]
+    }
+  }
+  

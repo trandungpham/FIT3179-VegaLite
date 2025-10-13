@@ -16,12 +16,18 @@
 <body>
 
     <div class="container">
+        <div id="barchart"></div>
         <div id="choropleth_map"></div>
     </div>
 
     <script type="text/javascript">
         // Embed the flow map visualization
-        vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json', { actions: false });
+        vegaEmbed('#barchart', 'js/barchart.vg.json').then(function(result) {
+            console.log('Barchart loaded successfully');
+        }).catch(console.error);
+        vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json').then(function(result) {
+            console.log('Choropleth map loaded successfully');
+        }).catch(console.error);
     </script>
 </body>
 </html>

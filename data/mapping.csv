@@ -1,0 +1,79 @@
+country,country_normalized,iso3,continent
+American Samoa,American Samoa,ASM,Oceania
+Argentina,Argentina,ARG,South America
+Austria,Austria,AUT,Europe
+Azerbaijan,Azerbaijan,AZE,Asia
+Bahrain,Bahrain,BHR,Asia
+Belgium,Belgium,BEL,Europe
+Botswana,Botswana,BWA,Africa
+Brazil,Brazil,BRA,South America
+Brunei,Brunei Darussalam,BRN,Asia
+Cambodia,Cambodia,KHM,Asia
+Canada,Canada,CAN,North America
+Chile,Chile,CHL,South America
+China,China,CHN,Asia
+Cook Islands,Cook Islands,COK,Oceania
+Cyprus,Cyprus,CYP,Asia
+Denmark,Denmark,DNK,Europe
+East Timor,Timor-Leste,TLS,Asia
+Egypt,Egypt,EGY,Africa
+Fiji,Fiji,FJI,Oceania
+France,France,FRA,Europe
+Germany,Germany,DEU,Europe
+Greece,Greece,GRC,Europe
+Guam,Guam,GUM,Oceania
+Hong Kong,Hong Kong,HKG,Asia
+Hong Kong (SAR),Hong Kong,HKG,Asia
+India,India,IND,Asia
+Indonesia,Indonesia,IDN,Asia
+Ireland,Ireland,IRL,Europe
+Italy,Italy,ITA,Europe
+Japan,Japan,JPN,Asia
+Kazakhstan,Kazakhstan,KAZ,Asia
+Kenya,Kenya,KEN,Africa
+Kiribati,Kiribati,KIR,Oceania
+Korea,South Korea,KOR,Asia
+Laos,Lao PDR,LAO,Asia
+Lebanon,Lebanon,LBN,Asia
+Luxembourg,Luxembourg,LUX,Europe
+Macau,Macao,MAC,Asia
+Malaysia,Malaysia,MYS,Asia
+Malta,Malta,MLT,Europe
+Marshall Islands,Marshall Islands,MHL,Oceania
+Mauritius,Mauritius,MUS,Africa
+Nauru,Nauru,NRU,Oceania
+Netherlands,Netherlands,NLD,Europe
+New Caledonia,New Caledonia,NCL,Oceania
+New Zealand,New Zealand,NZL,Oceania
+New..Zealand,New Zealand,NZL,Oceania
+Nigeria,Nigeria,NGA,Africa
+Niue,Niue,NIU,Oceania
+Oman,Oman,OMN,Asia
+Pakistan,Pakistan,PAK,Asia
+Palau,Palau,PLW,Oceania
+Papua New Guinea,Papua New Guinea,PNG,Oceania
+Peru,Peru,PER,South America
+Philippines,Philippines,PHL,Asia
+Qatar,Qatar,QAT,Asia
+Reunion,Réunion,REU,Africa
+Russia,Russian Federation,RUS,Europe
+Singapore,Singapore,SGP,Asia
+Solomon Islands,Solomon Islands,SLB,Oceania
+South Africa,South Africa,ZAF,Africa
+Sri Lanka,Sri Lanka,LKA,Asia
+Switzerland,Switzerland,CHE,Europe
+Tahiti,French Polynesia,PYF,Oceania
+Taiwan,Taiwan,TWN,Asia
+Thailand,Thailand,THA,Asia
+Tonga,Tonga,TON,Oceania
+Turkey,Türkiye,TUR,Asia
+UK,United Kingdom,GBR,Europe
+USA,United States of America,USA,North America
+United Arab Emirates,United Arab Emirates,ARE,Asia
+Uruguay,Uruguay,URY,South America
+Vanuatu,Vanuatu,VUT,Oceania
+Vietnam,Viet Nam,VNM,Asia
+Wallis Island,Wallis and Futuna,WLF,Oceania
+Western Samoa,Samoa,WSM,Oceania
+Yugoslavia,Serbia and Montenegro,SCG,Europe
+Zimbabwe,Zimbabwe,ZWE,Africa
