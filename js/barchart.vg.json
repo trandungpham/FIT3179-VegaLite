@@ -1,8 +1,6 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "title": {
-      "expr": "'Top 10 Foreign Countries by Total Volume — ' + year_select"
-    },
+    "title": "Top 10 Foreign Countries by Volume",
     "width": 700,
     "height": 420,
     "data": { "url": "data/city_pairs.csv" },
@@ -10,8 +8,15 @@
     "params": [
       {
         "name": "year_select",
-        "value": 2024,
-        "bind": { "input": "range", "min": 1985, "max": 2024, "step": 1, "name": "Year: " }
+        "value": 2024
+      },
+      {
+        "name": "direction",
+        "value": "Total"
+      },
+      {
+        "name": "type",
+        "value": "Passengers"
       },
       {
         "name": "continentSel",
@@ -22,9 +27,10 @@
   
     "transform": [
       { "filter": "isValid(datum.Year) && toNumber(datum.Year) == year_select" },
-      { "calculate": "toNumber(datum['Freight_Total'])", "as": "FreightTotal" },
-  
-      { "aggregate": [{ "op": "sum", "field": "FreightTotal", "as": "TotalFreight" }], "groupby": ["Country"] },
+      { "calculate": "datum[type + '_' + direction]", "as": "flow_raw" },
+      { "calculate": "isValid(datum.flow_raw) && length(toString(datum.flow_raw)) > 0 ? toNumber(datum.flow_raw) : 0", "as": "flow_value" },
+
+      { "aggregate": [{ "op": "sum", "field": "flow_value", "as": "total_flow" }], "groupby": ["Country"] },
   
       {
         "lookup": "Country",
@@ -40,17 +46,17 @@
       
       { "filter": { "param": "continentSel" } },
   
-      { "window": [{ "op": "rank", "as": "rank" }], "sort": [{ "field": "TotalFreight", "order": "descending" }] },
+      { "window": [{ "op": "rank", "as": "rank" }], "sort": [{ "field": "total_flow", "order": "descending" }] },
       { "filter": "datum.rank <= 10" }
     ],
-  
+
     "mark": { "type": "bar" },
-  
+
     "encoding": {
       "x": {
-        "field": "TotalFreight",
+        "field": "total_flow",
         "type": "quantitative",
-        "title": "Total Freight (tonnes)"
+        "title": "Traffic Volume"
       },
       "y": {
         "field": "Country",
@@ -66,7 +72,7 @@
       },
       "tooltip": [
         { "field": "Country", "type": "nominal" },
-        { "field": "TotalFreight", "type": "quantitative", "title": "Total Freight (tonnes)", "format": ",.0f" },
+        { "field": "total_flow", "type": "quantitative", "title": "Total Flow"},
         { "field": "Continent", "type": "nominal" }
       ]
     }

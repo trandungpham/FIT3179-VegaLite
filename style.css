@@ -99,3 +99,22 @@ body {
     background: #45a049;
 }
 
+/* Hide individual chart parameter controls since we use shared controls */
+.vega-bindings,
+.vega-params,
+.vega-param,
+.vega-bind,
+.vega-embed .vega-actions,
+.vega-embed .vega-params,
+.vega-embed .vega-bindings {
+    display: none !important;
+}
+
+/* Hide any parameter controls that might be generated */
+div[id*="barchart"] .vega-bindings,
+div[id*="choropleth"] .vega-bindings,
+#barchart .vega-bindings,
+#choropleth_map .vega-bindings {
+    display: none !important;
+}
+

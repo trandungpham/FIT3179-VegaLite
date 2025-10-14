@@ -8,18 +8,15 @@
     "params": [
       {
         "name": "direction",
-        "value": "Total",
-        "bind": { "input": "select", "options": ["In", "Out", "Total"], "name": "Direction: " }
+        "value": "Total"
       },
       {
         "name": "type",
-        "value": "Passengers",
-        "bind": { "input": "select", "options": ["Passengers", "Freight", "Mail"], "name": "Type: " }
+        "value": "Passengers"
       },
       {
         "name": "year",
-        "value": 2024,
-        "bind": { "input": "range", "min": 1985, "max": 2024, "step": 1, "name": "Year: " }
+        "value": 2024
       }
     ],
   

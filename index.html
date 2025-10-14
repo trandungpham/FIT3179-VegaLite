@@ -16,18 +16,78 @@
 <body>
 
     <div class="container">
-        <div id="barchart"></div>
         <div id="choropleth_map"></div>
+        <div id="barchart"></div>
+        <div id="bubble"></div>
     </div>
 
     <script type="text/javascript">
-        // Embed the flow map visualization
-        vegaEmbed('#barchart', 'js/barchart.vg.json').then(function(result) {
-            console.log('Barchart loaded successfully');
-        }).catch(console.error);
-        vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json').then(function(result) {
-            console.log('Choropleth map loaded successfully');
-        }).catch(console.error);
+        // Shared parameter values
+        const sharedParams = {
+            year: 2024,
+            type: 'Passengers',
+            direction: 'Total'
+        };
+
+        // Function to update both charts
+        function updateCharts() {
+            // Update barchart
+            vegaEmbed('#barchart', 'js/barchart.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                result.view.signal('year_select', sharedParams.year);
+                result.view.signal('type', sharedParams.type);
+                result.view.signal('direction', sharedParams.direction);
+            });
+
+            // Update choropleth
+            vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                result.view.signal('year', sharedParams.year);
+                result.view.signal('type', sharedParams.type);
+                result.view.signal('direction', sharedParams.direction);
+            });
+
+            // Update bubble chart
+            vegaEmbed('#bubble', 'js/bubble.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                result.view.signal('year_select', sharedParams.year);
+                result.view.signal('type_select', sharedParams.type);
+            });
+        }
+
+        // Load charts initially
+        updateCharts();
+
+        // Add global controls
+        const controlsDiv = document.createElement('div');
+        controlsDiv.innerHTML = `
+            <div style="padding: 20px; background: #f5f5f5; margin: 20px; border-radius: 8px;">
+                <h3>Visualisation Controls</h3>
+                <label>Year: <input type="range" id="yearControl" min="1985" max="2024" value="2024" onchange="sharedParams.year = parseInt(this.value); document.getElementById('yearDisplay').textContent = this.value; updateCharts();"></label>
+                <span id="yearDisplay" style="font-weight: bold; margin-left: 10px;">2024</span><br><br>
+                <label>Type: 
+                    <select id="typeControl" onchange="sharedParams.type = this.value; updateCharts();">
+                        <option value="Passengers">Passengers</option>
+                        <option value="Freight">Freight</option>
+                        <option value="Mail">Mail</option>
+                    </select>
+                </label><br><br>
+                <label>Direction: 
+                    <select id="directionControl" onchange="sharedParams.direction = this.value; updateCharts();">
+                        <option value="In">Inbound</option>
+                        <option value="Out">Outbound</option>
+                        <option value="Total" selected>Total</option>
+                    </select>
+                </label>
+            </div>
+        `;
+        document.body.insertBefore(controlsDiv, document.querySelector('.container'));
     </script>
 </body>
 </html>

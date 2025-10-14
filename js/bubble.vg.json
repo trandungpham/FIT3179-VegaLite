@@ -1,0 +1,93 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "Australian Ports Comparison",
+    "width": 820,
+    "height": 480,
+    "data": { "url": "data/city_pairs.csv" },
+  
+    "params": [
+      {
+        "name": "type_select",
+        "value": "Passengers"
+      },
+      {
+        "name": "year_select",
+        "value": 2024
+      },
+      {
+        "name": "state_filter",
+        "select": { "type": "point", "fields": ["state"] },
+        "bind": "legend"
+      }
+    ],
+  
+    "transform": [
+      { "filter": "isValid(datum.Year) && toNumber(datum.Year) == year_select" },
+  
+      {
+        "calculate": "toNumber(datum[type_select + '_In']) || 0", "as": "ValIn"
+      },
+      {
+        "calculate": "toNumber(datum[type_select + '_Out']) || 0", "as": "ValOut"
+      },
+      { "calculate": "toNumber(datum[type_select + '_Total']) || 0", "as": "ValTotal" },
+  
+      {
+        "lookup": "AustralianPort",
+        "from": {
+          "data": { "url": "data/australian_ports_states.csv" },
+          "key": "port",
+          "fields": ["state", "state_code"]
+        },
+        "as": ["state", "state_code"]
+      },
+      { "calculate": "isValid(datum.state) ? datum.state : 'Unknown'", "as": "state" },
+  
+      {
+        "aggregate": [
+          { "op": "sum", "field": "ValIn",  "as": "SumIn"  },
+          { "op": "sum", "field": "ValOut", "as": "SumOut" },
+          { "op": "sum", "field": "ValTotal", "as": "SumTotal" }
+        ],
+        "groupby": ["AustralianPort", "state"]
+      }
+    ],
+  
+    "mark": { "type": "circle", "opacity": 0.85, "tooltip": true },
+  
+    "encoding": {
+      "x": {
+        "field": "SumOut",
+        "type": "quantitative",
+        "title": "Outbound Traffic"
+      },
+      "y": {
+        "field": "SumIn",
+        "type": "quantitative",
+        "title": "Inbound Traffic"
+      },
+      "size": {
+        "field": "SumTotal",
+        "type": "quantitative",
+        "title": "Total Traffic"
+      },
+      "color": {
+        "field": "state",
+        "type": "nominal",
+        "title": "State/Territory (click to filter)",
+        "legend": {"symbolType": "circle"}
+      },
+      "opacity": {
+        "condition": { "param": "state_filter", "value": 1 },
+        "value": 0.3
+      },
+      "tooltip": [
+        { "field": "AustralianPort", "type": "nominal", "title": "Port" },
+        { "field": "state", "type": "nominal", "title": "State" },
+        { "field": "SumIn", "type": "quantitative", "title": "Inbound", "format": ",.0f" },
+        { "field": "SumOut", "type": "quantitative", "title": "Outbound", "format": ",.0f" },
+        { "field": "SumTotal", "type": "quantitative", "title": "Total", "format": ",.0f" }
+      ]
+    }
+  }
+  
