@@ -1,0 +1,67 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "Heat map of Australian port activity by month, filtered by type, direction, and year.",
+    "width": 900,
+    "height": 450,
+    "data": {"url": "../data/city_pairs.csv"},
+    "params": [
+      {
+        "name": "year",
+        "value": 2024
+      },
+      {
+        "name": "type",
+        "value": "Passengers"
+      },
+      {
+        "name": "direction",
+        "value": "Total"
+      }
+    ],
+    "transform": [
+      {"filter": "toNumber(datum.Year) == year"},
+      {
+        "calculate": "if(type == 'Passengers' && direction == 'In', datum.Passengers_In, if(type == 'Passengers' && direction == 'Out', datum.Passengers_Out, if(type == 'Passengers' && direction == 'Total', datum.Passengers_Total, if(type == 'Freight' && direction == 'In', datum.Freight_In, if(type == 'Freight' && direction == 'Out', datum.Freight_Out, if(type == 'Freight' && direction == 'Total', datum.Freight_Total, if(type == 'Mail' && direction == 'In', datum.Mail_In, if(type == 'Mail' && direction == 'Out', datum.Mail_Out, datum.Mail_Total))))))))",
+        "as": "Value"
+      },
+      {
+        "aggregate": [{"op": "sum", "field": "Value", "as": "TotalValue"}],
+        "groupby": ["AustralianPort", "Month_num"]
+      }
+    ],
+    "encoding": {
+      "x": {
+        "field": "Month_num",
+        "type": "ordinal",
+        "title": "Month",
+        "sort": [1,2,3,4,5,6,7,8,9,10,11,12],
+        "axis": {
+          "labelAngle": 0,
+          "labelExpr": "['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][datum.value - 1]"
+        }
+      },
+      "y": {
+        "field": "AustralianPort",
+        "type": "nominal",
+        "title": "Australian Port",
+        "sort": "-x"
+      },
+      "color": {
+        "field": "TotalValue",
+        "type": "quantitative",
+        "title": "Total Volume",
+        "scale": {"scheme": "blues"}
+      },
+      "tooltip": [
+        {"field": "AustralianPort", "title": "Port"},
+        {"field": "Month_num", "title": "Month"},
+        {"field": "TotalValue", "title": "Total", "format": ".2f"}
+      ]
+    },
+    "mark": "rect",
+    "config": {
+      "view": {"stroke": null},
+      "axis": {"labelFontSize": 11, "titleFontSize": 12}
+    }
+  }
+  

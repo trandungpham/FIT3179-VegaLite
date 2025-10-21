@@ -1,0 +1,65 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "Top Countries — Flow Volume (2014–2024)",
+    "width": 900,
+    "height": 500,
+    "data": { "url": "../data/city_pairs.csv" },
+    "params": [
+      { "name": "year_min", "value": 2014 },
+      { "name": "year_max", "value": 2024 },
+      { "name": "top_n", "value": 100 }
+    ],
+  
+    "transform": [
+      { "calculate": "toNumber(datum.Year)", "as": "YearNum" },
+      { "filter": "datum.YearNum >= year_min && datum.YearNum <= year_max" },
+      { "calculate": "toNumber(datum.Freight_Total) || 0", "as": "FreightValue" },
+  
+      { "aggregate": [{ "op": "sum", "field": "FreightValue", "as": "YearTotal" }], "groupby": ["Country", "YearNum"] },
+  
+      { "joinaggregate": [{ "op": "sum", "field": "YearTotal", "as": "CountryTotal" }], "groupby": ["Country"] },
+  
+      { "window": [{ "op": "rank", "as": "CountryRank" }], "sort": [{ "field": "CountryTotal", "order": "descending" }] },
+      { "filter": "datum.CountryRank <= top_n" }
+    ],
+  
+    "mark": "rect",
+  
+    "encoding": {
+      "x": {
+        "field": "YearNum",
+        "type": "ordinal",
+        "title": "Year",
+        "sort": "ascending",
+        "axis": { "labelAngle": 0 }
+      },
+      "y": {
+        "field": "Country",
+        "type": "nominal",
+        "title": "Top Countries by Freight Volume",
+        "sort": { "field": "CountryTotal", "order": "descending" }
+      },
+      "color": {
+        "field": "YearTotal",
+        "type": "quantitative",
+        "title": "Freight_Total (tonnes)",
+        "scale": { 
+          "scheme": "reds",
+          "type": "linear",
+          "domain": [1, 300000]
+        }
+      },
+      "tooltip": [
+        { "field": "Country", "title": "Country" },
+        { "field": "YearNum", "title": "Year" },
+        { "field": "YearTotal", "title": "Year Total", "format": ".2f" },
+        { "field": "CountryTotal", "title": "Total 2014–2024", "format": ".2f" }
+      ]
+    },
+  
+    "config": {
+      "view": { "stroke": null },
+      "axis": { "labelFontSize": 11, "titleFontSize": 12 }
+    }
+  }
+  

@@ -18,7 +18,9 @@
     <div class="container">
         <div id="choropleth_map"></div>
         <div id="barchart"></div>
-        <div id="bubble"></div>
+        <div id="bubble"></div >
+        <div id="heatmap_port"></div>
+        <div id="heatmap_country"></div>
     </div>
 
     <script type="text/javascript">
@@ -59,6 +61,18 @@
                 result.view.signal('year_select', sharedParams.year);
                 result.view.signal('type_select', sharedParams.type);
             });
+            vegaEmbed('#heatmap_port', 'js/heatmap_port.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                result.view.signal('year', sharedParams.year);
+                result.view.signal('type', sharedParams.type);
+                result.view.signal('direction', sharedParams.direction);
+            });
+            vegaEmbed('#heatmap_country', 'js/heatmap_country.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            })
         }
 
         // Load charts initially

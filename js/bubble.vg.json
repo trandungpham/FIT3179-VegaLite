@@ -3,7 +3,7 @@
     "title": "Australian Ports Comparison",
     "width": 820,
     "height": 480,
-    "data": { "url": "data/city_pairs.csv" },
+    "data": { "url": "../data/city_pairs.csv" },
   
     "params": [
       {
@@ -13,11 +13,6 @@
       {
         "name": "year_select",
         "value": 2024
-      },
-      {
-        "name": "state_filter",
-        "select": { "type": "point", "fields": ["state"] },
-        "bind": "legend"
       }
     ],
   
@@ -31,17 +26,6 @@
         "calculate": "toNumber(datum[type_select + '_Out']) || 0", "as": "ValOut"
       },
       { "calculate": "toNumber(datum[type_select + '_Total']) || 0", "as": "ValTotal" },
-  
-      {
-        "lookup": "AustralianPort",
-        "from": {
-          "data": { "url": "data/australian_ports_states.csv" },
-          "key": "port",
-          "fields": ["state", "state_code"]
-        },
-        "as": ["state", "state_code"]
-      },
-      { "calculate": "isValid(datum.state) ? datum.state : 'Unknown'", "as": "state" },
   
       {
         "aggregate": [
@@ -72,18 +56,12 @@
         "title": "Total Traffic"
       },
       "color": {
-        "field": "state",
+        "field": "AustralianPort",
         "type": "nominal",
-        "title": "State/Territory (click to filter)",
-        "legend": {"symbolType": "circle"}
-      },
-      "opacity": {
-        "condition": { "param": "state_filter", "value": 1 },
-        "value": 0.3
+        "title": "Australian Port"
       },
       "tooltip": [
         { "field": "AustralianPort", "type": "nominal", "title": "Port" },
-        { "field": "state", "type": "nominal", "title": "State" },
         { "field": "SumIn", "type": "quantitative", "title": "Inbound", "format": ",.0f" },
         { "field": "SumOut", "type": "quantitative", "title": "Outbound", "format": ",.0f" },
         { "field": "SumTotal", "type": "quantitative", "title": "Total", "format": ",.0f" }

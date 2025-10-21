@@ -1,0 +1,134 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "width": 300,
+    "height": 300,
+  
+    "projection": {
+      "type": "orthographic",
+      "rotate": {"expr": "[rotate0, rotate1, 0]"},
+      "clipAngle": 90
+    },
+  
+    "params": [
+      {
+        "name": "rotate0",
+        "value": 0,
+        "bind": {"input": "range", "min": -180, "max": 180, "step": 1}
+      },
+      {
+        "name": "rotate1",
+        "value": 0,
+        "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
+      },
+      {
+        "name": "AustralianPortFilter",
+        "value": "Melbourne",
+        "bind": {
+          "input": "select",
+          "options": [
+            "",
+            "Adelaide",
+            "Brisbane",
+            "Broome",
+            "Cairns",
+            "Canberra",
+            "Christmas Island",
+            "Darwin",
+            "Gold Coast",
+            "Hobart",
+            "Melbourne",
+            "Newcastle",
+            "Norfolk Island",
+            "Perth",
+            "Port Hedland",
+            "Sunshine Coast",
+            "Sydney",
+            "Toowoomba Wellcamp",
+            "Townsville"
+          ]
+        }
+      }
+    ],
+  
+  
+    "layer": [
+      { "data": {"sphere": true}, "mark": {"type": "geoshape", "fill": "aliceblue"} },
+  
+      {
+        "data": {
+          "name": "countries",
+          "url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/js/ne_110m_admin_0_countries.topojson",
+          "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+        },
+        "mark": {"type": "geoshape", "fill": "mintcream", "stroke": "black"}
+      },
+  
+      {
+        "data": {"url": "../data/city_pairs.csv"},
+        "transform": [
+          {
+            "lookup": "AustralianPort",
+            "from": {
+              "data": {"url": "../data/city_coordinates.csv"},
+              "key": "city",
+              "fields": ["latitude", "longitude"]
+            },
+            "as": ["lat1", "lon1"]
+          },
+          {
+            "lookup": "ForeignPort",
+            "from": {
+              "data": {"url": "../data/city_coordinates.csv"},
+              "key": "city",
+              "fields": ["latitude", "longitude"]
+            },
+            "as": ["lat2", "lon2"]
+          },
+          {
+            "calculate": "datum.Country",
+            "as": "Country2"
+          },
+          {
+            "filter": "!isValid(datum.lat1) || !isValid(datum.lon1) ? false : (!isValid(datum.lat2) || !isValid(datum.lon2) ? false : true)"
+          },
+          {
+            "filter": "AustralianPortFilter == '' || datum.AustralianPort == AustralianPortFilter || indexof(lower(datum.AustralianPort), lower(AustralianPortFilter)) >= 0"
+          }
+        ],
+  
+        "layer": [
+          {
+            "mark": {"type": "circle", "size": 20, "color": "#1f77b4", "opacity": 0.9, "clip": true},
+            "transform": [
+              {"calculate": "datum.lon1", "as": "lon"},
+              {"calculate": "datum.lat1", "as": "lat"},
+              {
+                "filter": "(rotate0 * -1) - 90 < datum.lon && datum.lon < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.lat && datum.lat < (rotate1 * -1) + 90"
+              }
+            ],
+            "encoding": {
+              "longitude": {"field": "lon", "type": "quantitative"},
+              "latitude": {"field": "lat", "type": "quantitative"},
+              "tooltip": [{"field": "AustralianPort", "type": "nominal", "title": "City"}]
+            }
+          },
+          {
+            "mark": {"type": "circle", "size": 20, "color": "#d62728", "opacity": 0.9, "clip": true},
+            "transform": [
+              {"calculate": "datum.lon2", "as": "lon"},
+              {"calculate": "datum.lat2", "as": "lat"},
+              {
+                "filter": "(rotate0 * -1) - 90 < datum.lon2 && datum.lon2 < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.lat2 && datum.lat2 < (rotate1 * -1) + 90"
+              }
+            ],
+            "encoding": {
+              "longitude": {"field": "lon", "type": "quantitative"},
+              "latitude": {"field": "lat", "type": "quantitative"},
+              "tooltip": [{"field": "ForeignPort", "type": "nominal", "title": "City"}, {"field": "Country2", "type": "nominal", "title": "Country"}]
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

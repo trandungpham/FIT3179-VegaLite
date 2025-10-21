@@ -1,0 +1,139 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "description": "Interactive flat map of connections between Australian and foreign cities, following the U.S. airports format, with both sides shown.",
+    "projection": {"type": "equalEarth"},
+    "width": 950,
+    "height": 520,
+  
+    "layer": [
+      {
+        "mark": {
+          "type": "geoshape",
+          "fill": "#eeeeee",
+          "stroke": "#ffffff",
+          "strokeWidth": 0.5
+        },
+        "data": {
+          "url": "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
+          "format": {"type": "topojson", "feature": "countries"}
+        }
+      },
+  
+      {
+        "mark": {"type": "rule", "color": "#1f77b4", "opacity": 0.35},
+        "data": {"url": "../data/unique_routes.csv"},
+        "transform": [
+          {"filter": {"param": "org", "empty": false}},
+          {
+            "lookup": "AustralianPort",
+            "from": {
+              "data": {"url": "../data/city_coordinates.csv"},
+              "key": "city",
+              "fields": ["latitude", "longitude"]
+            }
+          },
+          {
+            "lookup": "ForeignPort",
+            "from": {
+              "data": {"url": "../data/city_coordinates.csv"},
+              "key": "city",
+              "fields": ["latitude", "longitude"]
+            },
+            "as": ["lat2", "lon2"]
+          }
+        ],
+        "encoding": {
+          "latitude": {"field": "latitude"},
+          "longitude": {"field": "longitude"},
+          "latitude2": {"field": "lat2"},
+          "longitude2": {"field": "lon2"},
+          "tooltip": [
+            {"field": "AustralianPort", "title": "From"},
+            {"field": "ForeignPort", "title": "To"},
+            {"field": "Country", "title": "Country"}
+          ]
+        }
+      },
+  
+      {
+        "mark": {
+          "type": "circle",
+          "stroke": "white",
+          "strokeWidth": 0.5
+        },
+        "data": {"url": "../data/unique_routes.csv"},
+        "transform": [
+          {"aggregate": [{"op": "count", "as": "routes"}], "groupby": ["AustralianPort"]},
+          {
+            "lookup": "AustralianPort",
+            "from": {
+              "data": {"url": "../data/city_coordinates.csv"},
+              "key": "city",
+              "fields": ["latitude", "longitude"]
+            }
+          }
+        ],
+        "params": [
+          {
+            "name": "org",
+            "select": {
+              "type": "point",
+              "on": "pointerover",
+              "nearest": true,
+              "fields": ["AustralianPort"]
+            }
+          }
+        ],
+        "encoding": {
+          "latitude": {"field": "latitude"},
+          "longitude": {"field": "longitude"},
+          "size": {
+            "field": "routes",
+            "type": "quantitative",
+            "scale": {"rangeMax": 900},
+            "legend": null
+          },
+          "color": {
+            "condition": {"param": "org", "value": "#d62728"},
+            "value": "#1f77b4"
+          },
+          "order": {"field": "routes", "sort": "descending"},
+          "tooltip": [
+            {"field": "AustralianPort", "title": "Australian City"},
+            {"field": "routes", "title": "Number of Routes"}
+          ]
+        }
+      },
+  
+      {
+        "mark": {
+          "type": "circle",
+          "color": "#ff7f0e",
+          "opacity": 0.9,
+          "size": 60
+        },
+        "data": {"url": "../data/unique_routes.csv"},
+        "transform": [
+          {"filter": {"param": "org", "empty": false}},
+          {
+            "lookup": "ForeignPort",
+            "from": {
+              "data": {"url": "../data/city_coordinates.csv"},
+              "key": "city",
+              "fields": ["latitude", "longitude"]
+            },
+            "as": ["lat2", "lon2"]
+          }
+        ],
+        "encoding": {
+          "latitude": {"field": "lat2"},
+          "longitude": {"field": "lon2"},
+          "tooltip": [
+            {"field": "ForeignPort", "title": "Foreign City"},
+            {"field": "Country", "title": "Country"}
+          ]
+        }
+      }
+    ]
+  }
+  
