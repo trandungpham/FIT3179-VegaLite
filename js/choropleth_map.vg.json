@@ -1,6 +1,6 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "title": "International Air Traffic by Country",
+    "title": "International Air Traffic by Country From and To Australia",
     "width": 800,
     "height": 420,
     "projection": { "type": "equalEarth" },

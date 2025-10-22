@@ -1,8 +1,8 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "title": "Top 10 Foreign Countries by Volume",
-    "width": 700,
-    "height": 420,
+    "width": 450,
+    "height": 350,
     "data": { "url": "data/city_pairs.csv" },
   
     "params": [

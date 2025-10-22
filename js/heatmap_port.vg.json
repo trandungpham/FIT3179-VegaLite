@@ -1,8 +1,8 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "description": "Heat map of Australian port activity by month, filtered by type, direction, and year.",
-    "width": 900,
-    "height": 450,
+    "title": "Port Heatmap",
+    "width": 450,
+    "height": 385,
     "data": {"url": "../data/city_pairs.csv"},
     "params": [
       {

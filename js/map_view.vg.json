@@ -1,17 +1,18 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-    "description": "Interactive flat map of connections between Australian and foreign cities, following the U.S. airports format, with both sides shown.",
-    "projection": {"type": "equalEarth"},
+    "description": "Interactive 2D flat world map showing all ports with a filter by Australian Port.",
+    "title": "Australia's International Air Traffic Connections",
     "width": 950,
     "height": 520,
+    "projection": {"type": "equalEarth"},
   
     "layer": [
       {
         "mark": {
           "type": "geoshape",
-          "fill": "#eeeeee",
-          "stroke": "#ffffff",
-          "strokeWidth": 0.5
+          "fill": "#f6f6f6",
+          "stroke": "#cccccc",
+          "strokeWidth": 0.4
         },
         "data": {
           "url": "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
@@ -20,10 +21,12 @@
       },
   
       {
-        "mark": {"type": "rule", "color": "#1f77b4", "opacity": 0.35},
+        "mark": {"type": "rule", "color": "#3182bd", "opacity": 0.4},
         "data": {"url": "../data/unique_routes.csv"},
         "transform": [
-          {"filter": {"param": "org", "empty": false}},
+          {
+            "filter": "port_select == 'All' || datum.AustralianPort == port_select"
+          },
           {
             "lookup": "AustralianPort",
             "from": {
@@ -40,6 +43,9 @@
               "fields": ["latitude", "longitude"]
             },
             "as": ["lat2", "lon2"]
+          },
+          {
+            "filter": "isValid(datum.latitude) && isValid(datum.longitude) && isValid(datum.lat2) && isValid(datum.lon2)"
           }
         ],
         "encoding": {
@@ -58,6 +64,7 @@
       {
         "mark": {
           "type": "circle",
+          "color": "#1f77b4",
           "stroke": "white",
           "strokeWidth": 0.5
         },
@@ -73,17 +80,6 @@
             }
           }
         ],
-        "params": [
-          {
-            "name": "org",
-            "select": {
-              "type": "point",
-              "on": "pointerover",
-              "nearest": true,
-              "fields": ["AustralianPort"]
-            }
-          }
-        ],
         "encoding": {
           "latitude": {"field": "latitude"},
           "longitude": {"field": "longitude"},
@@ -93,28 +89,20 @@
             "scale": {"rangeMax": 900},
             "legend": null
           },
-          "color": {
-            "condition": {"param": "org", "value": "#d62728"},
-            "value": "#1f77b4"
-          },
-          "order": {"field": "routes", "sort": "descending"},
           "tooltip": [
-            {"field": "AustralianPort", "title": "Australian City"},
+            {"field": "AustralianPort", "title": "Australian Port"},
             {"field": "routes", "title": "Number of Routes"}
           ]
         }
       },
   
       {
-        "mark": {
-          "type": "circle",
-          "color": "#ff7f0e",
-          "opacity": 0.9,
-          "size": 60
-        },
+        "mark": {"type": "circle", "color": "#ff7f0e", "opacity": 0.8, "size": 60},
         "data": {"url": "../data/unique_routes.csv"},
         "transform": [
-          {"filter": {"param": "org", "empty": false}},
+          {
+            "filter": "port_select == 'All' || datum.AustralianPort == port_select"
+          },
           {
             "lookup": "ForeignPort",
             "from": {
@@ -123,16 +111,51 @@
               "fields": ["latitude", "longitude"]
             },
             "as": ["lat2", "lon2"]
+          },
+          {
+            "filter": "isValid(datum.lat2) && isValid(datum.lon2)"
           }
         ],
         "encoding": {
           "latitude": {"field": "lat2"},
           "longitude": {"field": "lon2"},
           "tooltip": [
-            {"field": "ForeignPort", "title": "Foreign City"},
+            {"field": "ForeignPort", "title": "Foreign Port"},
             {"field": "Country", "title": "Country"}
           ]
         }
+      }
+    ],
+  
+    "params": [
+      {
+        "name": "port_select",
+        "bind": {
+          "input": "select",
+          "options": [
+            "All",
+            "Adelaide",
+            "Brisbane",
+            "Broome",
+            "Cairns",
+            "Canberra",
+            "Christmas Island",
+            "Darwin",
+            "Gold Coast",
+            "Hobart",
+            "Melbourne",
+            "Newcastle",
+            "Norfolk Island",
+            "Perth",
+            "Port Hedland",
+            "Sunshine Coast",
+            "Sydney",
+            "Toowoomba Wellcamp",
+            "Townsville"
+          ],
+          "name": "Select Australian Port: "
+        },
+        "value": "All"
       }
     ]
   }

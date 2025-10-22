@@ -1,0 +1,111 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "description": "Stacked bar chart of inbound and outbound totals from 2014–2024, filterable by Australian Port and Product Type.",
+    "title": "Flow Comparison by Australian Port and Product Type (2014–2024)",
+    "width": 600,
+    "height": 350,
+  
+    "data": { "url": "../data/city_pairs.csv" },
+  
+    "params": [
+      {
+        "name": "port_select",
+        "bind": {
+          "input": "select",
+          "options": [
+            "All",
+            "Adelaide",
+            "Brisbane",
+            "Broome",
+            "Cairns",
+            "Canberra",
+            "Christmas Island",
+            "Darwin",
+            "Gold Coast",
+            "Hobart",
+            "Melbourne",
+            "Newcastle",
+            "Norfolk Island",
+            "Perth",
+            "Port Hedland",
+            "Sunshine Coast",
+            "Sydney",
+            "Townsville",
+            "Toowoomba Wellcamp"
+          ],
+          "name": "Select Australian Port: "
+        },
+        "value": "All"
+      },
+      {
+        "name": "prod_type_select",
+        "bind": {
+          "input": "select",
+          "options": ["Passengers", "Freight", "Mail"],
+          "name": "Select Product Type: "
+        },
+        "value": "Passengers"
+      }
+    ],
+  
+    "transform": [
+      {
+        "filter": "toNumber(datum.Year) >= 2014 && toNumber(datum.Year) <= 2024"
+      },
+      {
+        "filter": "port_select == 'All' || datum.AustralianPort == port_select"
+      },
+      {
+        "calculate": "if(prod_type_select == 'Passengers', datum.Passengers_In, if(prod_type_select == 'Freight', datum.Freight_In, datum.Mail_In))",
+        "as": "Inbound"
+      },
+      {
+        "calculate": "if(prod_type_select == 'Passengers', datum.Passengers_Out, if(prod_type_select == 'Freight', datum.Freight_Out, datum.Mail_Out))",
+        "as": "Outbound"
+      },
+      {
+        "fold": ["Inbound", "Outbound"],
+        "as": ["Direction", "Value"]
+      },
+      {
+        "aggregate": [
+          { "op": "sum", "field": "Value", "as": "TotalValue" }
+        ],
+        "groupby": ["Year", "Direction"]
+      }
+    ],
+  
+    "mark": {"type": "bar"},
+    "encoding": {
+      "x": {
+        "field": "Year",
+        "type": "ordinal",
+        "title": "Year (2014–2024)",
+        "axis": {"labelAngle": 0}
+      },
+      "y": {
+        "field": "TotalValue",
+        "type": "quantitative",
+        "title": "Total Volume"
+      },
+      "color": {
+        "field": "Direction",
+        "type": "nominal",
+        "title": "Flow Direction",
+        "scale": {
+          "domain": ["Inbound", "Outbound"],
+          "range": ["#1f77b4", "#ff7f0e"]
+        }
+      },
+      "tooltip": [
+        {"field": "Year", "title": "Year"},
+        {"field": "Direction", "title": "Direction"},
+        {"aggregate": "sum", "field": "TotalValue", "title": "Total Value"}
+      ]
+    },
+    "config": {
+      "view": {"stroke": null},
+      "axis": {"labelFontSize": 11, "titleFontSize": 12}
+    }
+  }
+  

@@ -1,8 +1,8 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "title": "Australian Ports Comparison",
-    "width": 820,
-    "height": 480,
+    "width": 450,
+    "height": 350,
     "data": { "url": "../data/city_pairs.csv" },
   
     "params": [
@@ -34,7 +34,8 @@
           { "op": "sum", "field": "ValTotal", "as": "SumTotal" }
         ],
         "groupby": ["AustralianPort", "state"]
-      }
+      },
+      { "filter": "datum.SumTotal > 0" }
     ],
   
     "mark": { "type": "circle", "opacity": 0.85, "tooltip": true },

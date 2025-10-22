@@ -15,93 +15,318 @@
 </head>
 <body>
 
-    <div class="container">
-        <div id="choropleth_map"></div>
-        <div id="barchart"></div>
-        <div id="bubble"></div >
-        <div id="heatmap_port"></div>
-        <div id="heatmap_country"></div>
-    </div>
-
-    <script type="text/javascript">
-        // Shared parameter values
-        const sharedParams = {
-            year: 2024,
-            type: 'Passengers',
-            direction: 'Total'
-        };
-
-        // Function to update both charts
-        function updateCharts() {
-            // Update barchart
-            vegaEmbed('#barchart', 'js/barchart.vg.json', {
-                actions: false,
-                renderer: 'svg'
-            }).then(function(result) {
-                result.view.signal('year_select', sharedParams.year);
-                result.view.signal('type', sharedParams.type);
-                result.view.signal('direction', sharedParams.direction);
-            });
-
-            // Update choropleth
-            vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json', {
-                actions: false,
-                renderer: 'svg'
-            }).then(function(result) {
-                result.view.signal('year', sharedParams.year);
-                result.view.signal('type', sharedParams.type);
-                result.view.signal('direction', sharedParams.direction);
-            });
-
-            // Update bubble chart
-            vegaEmbed('#bubble', 'js/bubble.vg.json', {
-                actions: false,
-                renderer: 'svg'
-            }).then(function(result) {
-                result.view.signal('year_select', sharedParams.year);
-                result.view.signal('type_select', sharedParams.type);
-            });
-            vegaEmbed('#heatmap_port', 'js/heatmap_port.vg.json', {
-                actions: false,
-                renderer: 'svg'
-            }).then(function(result) {
-                result.view.signal('year', sharedParams.year);
-                result.view.signal('type', sharedParams.type);
-                result.view.signal('direction', sharedParams.direction);
-            });
-            vegaEmbed('#heatmap_country', 'js/heatmap_country.vg.json', {
-                actions: false,
-                renderer: 'svg'
-            })
-        }
-
-        // Load charts initially
-        updateCharts();
-
-        // Add global controls
-        const controlsDiv = document.createElement('div');
-        controlsDiv.innerHTML = `
-            <div style="padding: 20px; background: #f5f5f5; margin: 20px; border-radius: 8px;">
-                <h3>Visualisation Controls</h3>
-                <label>Year: <input type="range" id="yearControl" min="1985" max="2024" value="2024" onchange="sharedParams.year = parseInt(this.value); document.getElementById('yearDisplay').textContent = this.value; updateCharts();"></label>
-                <span id="yearDisplay" style="font-weight: bold; margin-left: 10px;">2024</span><br><br>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <h2>Visualization Controls</h2>
+        
+        <!-- Shared Controls for Multiple Charts -->
+        <div class="control-section">
+            <h3>📊 Core Visualizations</h3>
+            <p class="description">Controls for Bar Chart, Choropleth Map, Bubble Chart, and Port Heatmap. These charts share the same filter parameters.</p>
+            <div class="control-group">
+                <label>Year: <input type="range" id="sharedYear" min="1985" max="2024" value="2024" onchange="updateSharedCharts()"></label>
+                <span id="sharedYearDisplay">2024</span>
+            </div>
+            <div class="control-group">
                 <label>Type: 
-                    <select id="typeControl" onchange="sharedParams.type = this.value; updateCharts();">
+                    <select id="sharedType" onchange="updateSharedCharts()">
                         <option value="Passengers">Passengers</option>
                         <option value="Freight">Freight</option>
                         <option value="Mail">Mail</option>
                     </select>
-                </label><br><br>
+                </label>
+            </div>
+            <div class="control-group">
                 <label>Direction: 
-                    <select id="directionControl" onchange="sharedParams.direction = this.value; updateCharts();">
+                    <select id="sharedDirection" onchange="updateSharedCharts()">
                         <option value="In">Inbound</option>
                         <option value="Out">Outbound</option>
                         <option value="Total" selected>Total</option>
                     </select>
                 </label>
             </div>
-        `;
-        document.body.insertBefore(controlsDiv, document.querySelector('.container'));
+            <div class="chart-descriptions">
+                <h4>Affected Charts:</h4>
+                <ul>
+                    <li><strong>Bar Chart:</strong> Top 10 foreign countries by volume</li>
+                    <li><strong>Choropleth Map:</strong> Geographic visualization by country</li>
+                    <li><strong>Bubble Chart:</strong> Australian ports comparison</li>
+                    <li><strong>Port Heatmap:</strong> Monthly activity patterns</li>
+                    <li><strong>Country Heatmap:</strong> Top 10 country by volume</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Stacked Area Controls -->
+        <div class="control-section">
+            <h3>Stacked Area Chart</h3>
+            <p class="description">Time series of inbound/outbound traffic. Shows trends over time.</p>
+            <div class="control-group">
+                <label>Australian Port: 
+                    <select id="stackedAreaPort" onchange="updateStackedArea()">
+                        <option value="All">All Ports</option>
+                        <option value="Adelaide">Adelaide</option>
+                        <option value="Brisbane">Brisbane</option>
+                        <option value="Broome">Broome</option>
+                        <option value="Cairns">Cairns</option>
+                        <option value="Canberra">Canberra</option>
+                        <option value="Christmas Island">Christmas Island</option>
+                        <option value="Darwin">Darwin</option>
+                        <option value="Gold Coast">Gold Coast</option>
+                        <option value="Hobart">Hobart</option>
+                        <option value="Melbourne">Melbourne</option>
+                        <option value="Newcastle">Newcastle</option>
+                        <option value="Norfolk Island">Norfolk Island</option>
+                        <option value="Perth">Perth</option>
+                        <option value="Port Hedland">Port Hedland</option>
+                        <option value="Sunshine Coast">Sunshine Coast</option>
+                        <option value="Sydney">Sydney</option>
+                        <option value="Townsville">Townsville</option>
+                        <option value="Toowoomba Wellcamp">Toowoomba Wellcamp</option>
+                    </select>
+                </label>
+            </div>
+            <div class="control-group">
+                <label>Product Type: 
+                    <select id="stackedAreaType" onchange="updateStackedArea()">
+                        <option value="Passengers">Passengers</option>
+                        <option value="Freight">Freight</option>
+                        <option value="Mail">Mail</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <!-- Map View Controls -->
+        <div class="control-section">
+            <h3>Interactive Map</h3>
+            <p class="description">2D world map showing port connections. Choose Australian ports to see connections.</p>
+            <div class="control-group">
+                <label>Australian Port Filter: 
+                    <select id="mapViewPort" onchange="updateMapView()">
+                        <option value="All">All Ports</option>
+                        <option value="Adelaide">Adelaide</option>
+                        <option value="Brisbane">Brisbane</option>
+                        <option value="Broome">Broome</option>
+                        <option value="Cairns">Cairns</option>
+                        <option value="Canberra">Canberra</option>
+                        <option value="Christmas Island">Christmas Island</option>
+                        <option value="Darwin">Darwin</option>
+                        <option value="Gold Coast">Gold Coast</option>
+                        <option value="Hobart">Hobart</option>
+                        <option value="Melbourne">Melbourne</option>
+                        <option value="Newcastle">Newcastle</option>
+                        <option value="Norfolk Island">Norfolk Island</option>
+                        <option value="Perth">Perth</option>
+                        <option value="Port Hedland">Port Hedland</option>
+                        <option value="Sunshine Coast">Sunshine Coast</option>
+                        <option value="Sydney">Sydney</option>
+                        <option value="Townsville">Townsville</option>
+                        <option value="Toowoomba Wellcamp">Toowoomba Wellcamp</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+        <div class="control-section">
+            <h3>Data Sources</h3>
+            <div class="chart-descriptions">
+                <h4>Data Sources:</h4>
+                <ul>
+                    <li><a href="https://www.bitre.gov.au/publications/ongoing/international_airline_activity-time_series">International Airline Activity Time Series</a></li>
+                    <li><a href="https://www.kaggle.com/datasets/alenreuel/airport-network?select=airport+-+airport.csv">Aiport Network</a></li>
+                    <li><a href="https://www.kaggle.com/datasets/andreshg/countries-iso-codes-continent-flags-url">Country ISO Mapping</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="container">
+            <div class="chart-with-text">
+                <div id="choropleth_map"></div>
+                <div class="chart-text">
+                    <h4>About This Chart</h4>
+                    <p>
+                        This choropleth map visualizes international air traffic to and from Australia in 2024. Each country is shaded according to its flow volume, with darker blues representing higher traffic levels.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 2x2 Grid for Core Charts -->
+            <div class="charts-grid">
+                <!-- Top 10 Foreign Countries by Volume -->
+                <div class="chart-group">
+                    <div id="barchart"></div>
+                    <div class="chart-description">
+                        <p>
+                            This bar chart highlights Australia’s top ten foreign partners by air traffic volume in 2024.
+                            New Zealand leads the list, followed by Singapore, Indonesia, and China, showing strong regional
+                            connections across Oceania and Asia.
+                        </p>
+                    </div>
+                </div>
+            
+                <!-- Top 10 Countries by Volume (Heatmap) -->
+                <div class="chart-group">
+                    <div id="heatmap_country"></div>
+                    <div class="chart-description">
+                        <p>
+                            The heatmap tracks yearly air traffic trends for the top ten partner countries from 2014–2024.
+                            Notice the sharp decline in 2020 due to global travel restrictions, followed by a gradual recovery
+                            in subsequent years.
+                        </p>
+                    </div>
+                </div>
+            
+                <!-- Australian Ports Comparison -->
+                <div class="chart-group">
+                    <div id="bubble"></div>
+                    <div class="chart-description">
+                        <p>
+                            This bubble chart compares inbound and outbound volumes across Australian ports.
+                            Sydney and Melbourne dominate both traffic directions, indicating their central role in international connectivity.
+                        </p>
+                    </div>
+                </div>
+            
+                <!-- Port Heatmap -->
+                <div class="chart-group">
+                    <div id="heatmap_port"></div>
+                    <div class="chart-description">
+                        <p>
+                            The port heatmap visualizes monthly activity patterns across Australian ports.
+                            Melbourne and Sydney show consistent year-round operation, while smaller ports fluctuate seasonally.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-with-text">
+                <div id="stacked_area"></div>
+                <div class="chart-text">
+                  <h4>About This Chart</h4>
+                  <p>
+                    This stacked area chart displays inbound and outbound air traffic trends from 2014 to 2024. It highlights how travel volumes fluctuated during major global events, including a dip in 2020 and recovery afterward.
+                  </p>
+                </div>
+            </div>
+            <div class="chart-with-text">
+                <div id="map_view"></div>
+                <div class="chart-text">
+                    <h4>About This Map</h4>
+                    <p>
+                        The interactive map shows connections between Australian and international ports. Each line represents a route, with Australian ports size indicating number of connections.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // Store chart instances
+        let chartInstances = {};
+
+        // Shared controls update function
+        function updateSharedCharts() {
+            const year = document.getElementById('sharedYear').value;
+            const type = document.getElementById('sharedType').value;
+            const direction = document.getElementById('sharedDirection').value;
+            
+            document.getElementById('sharedYearDisplay').textContent = year;
+            
+            // Update Bar Chart
+            vegaEmbed('#barchart', 'js/barchart.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.barchart = result;
+                result.view.signal('year_select', parseInt(year));
+                result.view.signal('type', type);
+                result.view.signal('direction', direction);
+            });
+
+            // Update Choropleth Map
+            vegaEmbed('#choropleth_map', 'js/choropleth_map.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.choropleth_map = result;
+                result.view.signal('year', parseInt(year));
+                result.view.signal('type', type);
+                result.view.signal('direction', direction);
+            });
+
+            // Update Bubble Chart
+            vegaEmbed('#bubble', 'js/bubble.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.bubble = result;
+                result.view.signal('year_select', parseInt(year));
+                result.view.signal('type_select', type);
+            });
+
+            // Update Port Heatmap
+            vegaEmbed('#heatmap_port', 'js/heatmap_port.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.heatmap_port = result;
+                result.view.signal('year', parseInt(year));
+                result.view.signal('type', type);
+                result.view.signal('direction', direction);
+            });
+
+            vegaEmbed('#heatmap_country', 'js/heatmap_country.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.heatmap_country = result;
+                result.view.signal('year_min', parseInt(yearMin));
+                result.view.signal('year_max', parseInt(yearMax));
+                result.view.signal('top_n', parseInt(topN));
+                result.view.signal('type', type);
+            });
+        }
+
+        function updateStackedArea() {
+            const port = document.getElementById('stackedAreaPort').value;
+            const type = document.getElementById('stackedAreaType').value;
+            
+            vegaEmbed('#stacked_area', 'js/stacked_area.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.stacked_area = result;
+                result.view.signal('port_select', port);
+                result.view.signal('prod_type_select', type);
+            });
+        }
+
+        function updateMapView() {
+            const port = document.getElementById('mapViewPort').value;
+            
+            vegaEmbed('#map_view', 'js/map_view.vg.json', {
+                actions: false,
+                renderer: 'svg'
+            }).then(function(result) {
+                chartInstances.map_view = result;
+                result.view.signal('port_select', port);
+            });
+        }
+
+        // Load all charts initially
+        function loadAllCharts() {
+            updateSharedCharts();
+            updateStackedArea();
+            updateMapView();
+        }
+
+        // Load charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllCharts();
+        });
     </script>
 </body>
 </html>

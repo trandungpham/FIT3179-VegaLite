@@ -1,26 +1,27 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "title": "Top Countries — Flow Volume (2014–2024)",
-    "width": 900,
-    "height": 500,
+    "title": "Top 10 Countries by Volume",
+    "width": 450,
+    "height": 320,
     "data": { "url": "../data/city_pairs.csv" },
     "params": [
+      { "name": "type", "value": "Passengers" },
       { "name": "year_min", "value": 2014 },
       { "name": "year_max", "value": 2024 },
-      { "name": "top_n", "value": 100 }
+      { "name": "top_n", "value": 15 }
     ],
   
     "transform": [
       { "calculate": "toNumber(datum.Year)", "as": "YearNum" },
       { "filter": "datum.YearNum >= year_min && datum.YearNum <= year_max" },
-      { "calculate": "toNumber(datum.Freight_Total) || 0", "as": "FreightValue" },
-  
-      { "aggregate": [{ "op": "sum", "field": "FreightValue", "as": "YearTotal" }], "groupby": ["Country", "YearNum"] },
-  
+      { "calculate": "toNumber(datum[type + '_Total']) || 0", "as": "Value" },
+
+      { "aggregate": [{ "op": "sum", "field": "Value", "as": "YearTotal" }], "groupby": ["Country", "YearNum"] },
+
       { "joinaggregate": [{ "op": "sum", "field": "YearTotal", "as": "CountryTotal" }], "groupby": ["Country"] },
-  
+
       { "window": [{ "op": "rank", "as": "CountryRank" }], "sort": [{ "field": "CountryTotal", "order": "descending" }] },
-      { "filter": "datum.CountryRank <= top_n" }
+      { "filter": "datum.CountryRank <= 100" }
     ],
   
     "mark": "rect",
@@ -36,24 +37,24 @@
       "y": {
         "field": "Country",
         "type": "nominal",
-        "title": "Top Countries by Freight Volume",
+        "title": "Top Countries by Volume",
         "sort": { "field": "CountryTotal", "order": "descending" }
       },
       "color": {
         "field": "YearTotal",
         "type": "quantitative",
-        "title": "Freight_Total (tonnes)",
+        "title": {"expr": "type + ' Volume'"},
         "scale": { 
-          "scheme": "reds",
+          "scheme": "blues",
           "type": "linear",
-          "domain": [1, 300000]
+          "domain": {"expr": "type == 'Passengers' ? [1, 10000000] : type == 'Freight' ? [1, 300000] : [1, 1000]"}
         }
       },
       "tooltip": [
         { "field": "Country", "title": "Country" },
         { "field": "YearNum", "title": "Year" },
-        { "field": "YearTotal", "title": "Year Total", "format": ".2f" },
-        { "field": "CountryTotal", "title": "Total 2014–2024", "format": ".2f" }
+        { "field": "YearTotal", "title": "Volume (Year)", "format": ".2f" },
+        { "field": "CountryTotal", "title": "Volume (Total)", "format": ".2f" }
       ]
     },
   
