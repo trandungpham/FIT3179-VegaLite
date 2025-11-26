@@ -3,7 +3,7 @@
     "title": "Top 10 Countries by Volume",
     "width": 450,
     "height": 320,
-    "data": { "url": "../data/city_pairs.csv" },
+    "data": { "url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/city_pairs.csv" },
     "params": [
       { "name": "type", "value": "Passengers" },
       { "name": "year_min", "value": 2014 },

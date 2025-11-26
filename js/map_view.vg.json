@@ -22,7 +22,7 @@
   
       {
         "mark": {"type": "rule", "color": "#3182bd", "opacity": 0.4},
-        "data": {"url": "../data/unique_routes.csv"},
+        "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/unique_routes.csv"},
         "transform": [
           {
             "filter": "port_select == 'All' || datum.AustralianPort == port_select"
@@ -30,7 +30,7 @@
           {
             "lookup": "AustralianPort",
             "from": {
-              "data": {"url": "../data/city_coordinates.csv"},
+              "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/city_coordinates.csv"},
               "key": "city",
               "fields": ["latitude", "longitude"]
             }
@@ -38,7 +38,7 @@
           {
             "lookup": "ForeignPort",
             "from": {
-              "data": {"url": "../data/city_coordinates.csv"},
+              "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/city_coordinates.csv"},
               "key": "city",
               "fields": ["latitude", "longitude"]
             },
@@ -68,13 +68,13 @@
           "stroke": "white",
           "strokeWidth": 0.5
         },
-        "data": {"url": "../data/unique_routes.csv"},
+        "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/unique_routes.csv"},
         "transform": [
           {"aggregate": [{"op": "count", "as": "routes"}], "groupby": ["AustralianPort"]},
           {
             "lookup": "AustralianPort",
             "from": {
-              "data": {"url": "../data/city_coordinates.csv"},
+              "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/city_coordinates.csv"},
               "key": "city",
               "fields": ["latitude", "longitude"]
             }
@@ -98,7 +98,7 @@
   
       {
         "mark": {"type": "circle", "color": "#ff7f0e", "opacity": 0.8, "size": 60},
-        "data": {"url": "../data/unique_routes.csv"},
+        "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/unique_routes.csv"},
         "transform": [
           {
             "filter": "port_select == 'All' || datum.AustralianPort == port_select"
@@ -106,7 +106,7 @@
           {
             "lookup": "ForeignPort",
             "from": {
-              "data": {"url": "../data/city_coordinates.csv"},
+              "data": {"url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/city_coordinates.csv"},
               "key": "city",
               "fields": ["latitude", "longitude"]
             },

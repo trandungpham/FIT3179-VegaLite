@@ -30,13 +30,13 @@
       },
   
       {
-        "data": { "url": "../data/city_pairs.csv" },
+        "data": { "url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/city_pairs.csv" },
         "transform": [
           { "filter": "toNumber(datum.Year) == year" },
           {
             "lookup": "Country",
             "from": {
-              "data": { "url": "../data/mapping.csv" },
+              "data": { "url": "https://raw.githubusercontent.com/trandungpham/FIT3179-VegaLite/refs/heads/main/data/mapping.csv" },
               "key": "country",
               "fields": ["iso3", "country_normalized"]
             }
