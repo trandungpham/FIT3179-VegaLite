@@ -3,7 +3,7 @@
     "title": "Top 10 Foreign Countries by Volume",
     "width": 450,
     "height": 350,
-    "data": { "url": "data/city_pairs.csv" },
+    "data": { "url": "../data/city_pairs.csv" },
   
     "params": [
       {
@@ -35,7 +35,7 @@
       {
         "lookup": "Country",
         "from": {
-          "data": { "url": "data/mapping.csv" },
+          "data": { "url": "../data/mapping.csv" },
           "key": "country",
           "fields": ["continent"]
         },
